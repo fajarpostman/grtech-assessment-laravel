@@ -3,7 +3,7 @@
   <a-layout class="min-h-screen">
     <a-layout-header class="bg-white shadow-md px-6 flex justify-between items-center">
       <div class="flex items-center space-x-8">
-        <div class="text-xl font-bold text-blue-600 tracking-wide">MyApp</div>
+        <div class="text-xl font-bold text-blue-600 tracking-wide">GRTech-Test</div>
         <nav class="flex space-x-6">
           <button
             v-for="item in [
@@ -24,7 +24,6 @@
           </button>
         </nav>
       </div>
-
       <div>
         <a-button type="primary" danger shape="round" @click="logout">
           Logout
@@ -34,20 +33,11 @@
     <a-layout-content class="p-8 bg-gray-50">
       <div class="max-w-3xl mx-auto">
         <a-card class="shadow-md rounded-xl">
-          <h2 class="text-2xl font-bold mb-6 text-gray-700">Profile</h2>
-          <a-form layout="vertical" class="space-y-4">
-            <a-form-item label="Name">
-              <a-input v-model:value="user.name" placeholder="Enter your name" />
-            </a-form-item>
-            <a-form-item label="Email">
-              <a-input v-model:value="user.email" disabled />
-            </a-form-item>
-            <div class="flex justify-end">
-              <a-button type="primary" @click="saveProfile">
-                Save Changes
-              </a-button>
-            </div>
-          </a-form>
+          <h2 class="text-2xl font-bold mb-6 text-gray-700">User Profile</h2>
+          <ul class="space-y-2 text-gray-700">
+            <li><strong>Name:</strong> {{ user?.name || '-' }}</li>
+            <li><strong>Email:</strong> {{ user?.email || '-' }}</li>
+          </ul>
         </a-card>
       </div>
     </a-layout-content>
@@ -55,31 +45,22 @@
 </template>
 <script setup>
 import { Head, usePage, router } from '@inertiajs/vue3'
-import axios from '@/axios'
-import { reactive } from 'vue'
-import { message } from 'ant-design-vue'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { computed } from 'vue'
+import axios from '@/axios'
 
-const { props } = usePage()
-const user = reactive({
-  name: props.auth.user.name,
-  email: props.auth.user.email,
-})
-
-const saveProfile = () => {
-  axios.put('/user/profile', user)
-    .then(() => message.success('Profile updated successfully'))
-    .catch(() => message.error('Something went wrong'))
-}
-
-const logout = () => {
-  axios.post('/logout').then(() => {
-    router.visit('/login')
+function logout() {
+  router.post('/logout', {}, {
+    onFinish: () => {
+      window.location.href = '/login'
+    }
   })
 }
 
+const page = usePage()
+const user = computed(() => page.props.auth?.user || {})
+
 const selectedMenu = ['dashboard']
+
 const onMenuClick = (key) => {
   if (key === 'dashboard') router.visit('/dashboard')
   if (key === 'companies') router.visit('/companies')

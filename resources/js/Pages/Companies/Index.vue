@@ -107,6 +107,7 @@
 import axios from '@/axios'
 import CompanyModal from './CompanyModal.vue'
 import { message, Modal } from 'ant-design-vue'
+import { router } from '@inertiajs/vue3'
 
 export default {
   components: { CompanyModal },
@@ -114,6 +115,12 @@ export default {
     return {
       data: [],
       pagination: { current: 1, pageSize: 10, total: 0 },
+      selectedMenu: ['companies'],
+      menuItems: [
+        { key: 'dashboard', label: 'Dashboard' },
+        { key: 'companies', label: 'Companies' },
+        { key: 'employees', label: 'Employees' }
+      ],
       columns: [
         { 
           title: 'No',
@@ -136,6 +143,13 @@ export default {
     this.load()
   },
   methods: {
+        logout() {
+        router.post('/logout', {}, {
+            onFinish: () => {
+            window.location.href = '/login'
+            }
+        })
+    },
     load(params = {}) {
       const { current = this.pagination.current, pageSize = this.pagination.pageSize } = params;
       axios.get('/api/companies', { params: { page: current, per_page: pageSize}})
@@ -167,7 +181,13 @@ export default {
         }
       })
     },
-    reload() { this.load() }
+    reload() { this.load() },
+    onMenuClick(key) {
+      this.selectedMenu = [key]
+      if (key === 'dashboard') router.visit('/dashboard')
+      if (key === 'companies') router.visit('/companies')
+      if (key === 'employees') router.visit('/employees')
+    }
   }
 }
 </script>

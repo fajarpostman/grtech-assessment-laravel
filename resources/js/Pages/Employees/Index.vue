@@ -125,6 +125,13 @@ export default {
     this.load()
   },
   methods: {
+    logout() {
+        router.post('/logout', {}, {
+            onFinish: () => {
+            window.location.href = '/login'
+            }
+        })
+    },
     load(params = {}) {
       const { current = this.pagination.current, pageSize = this.pagination.pageSize } = params
       axios.get('/api/employees', { params: { page: current, per_page: pageSize } })
@@ -163,11 +170,6 @@ export default {
       if (key === 'companies') router.visit('/companies')
       if (key === 'employees') router.visit('/employees')
     },
-    logout() {
-      axios.post('/logout').then(() => {
-        router.visit('/login')
-      })
-    }
   }
 }
 </script>

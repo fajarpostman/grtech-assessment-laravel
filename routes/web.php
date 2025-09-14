@@ -8,6 +8,10 @@ use App\Http\Controllers\EmployeeController;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+Route::get('/login', function () {
+    return Inertia::render('Auth/Login');
+})->name('login');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth'])->name('dashboard');
